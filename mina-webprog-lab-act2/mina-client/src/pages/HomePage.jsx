@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import Button from '../components/Button';
 import backgroundImage from '../assets/images/background.jpg';
 
+const getStoredAuthUser = () => localStorage.getItem('authUser');
+
 const HomePage = () => {
   // Authentication state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(getStoredAuthUser()));
+  const [currentUser, setCurrentUser] = useState(() => getStoredAuthUser());
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,14 +23,10 @@ const HomePage = () => {
   // Modal ref for click outside
   const modalRef = useRef(null);
 
-  // Check for existing session on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem('authUser');
-    if (storedUser) {
-      setIsLoggedIn(true);
-      setCurrentUser(storedUser);
-    }
-  }, []);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setError('');
+  };
 
   // Close modal on escape key
   useEffect(() => {
@@ -59,11 +57,6 @@ const HomePage = () => {
     setEmail('');
     setPassword('');
     setConfirmPassword('');
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setError('');
   };
 
   // Mock user database (stored in localStorage)
